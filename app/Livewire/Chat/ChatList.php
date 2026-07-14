@@ -11,8 +11,9 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Livewire\Attributes\On;
+#[Layout('components.user.app')]
+#[Title('Chat List')]
+
 
 class ChatList extends Component
 {
@@ -40,14 +41,10 @@ class ChatList extends Component
     public function updatedSearch()
     {
         $this->loadUsers();
+        $this->newUserLoad();
     }
 
-    /**
-     * Load users for the chat sidebar.
-     *
-     * This method retrieves users who are not the authenticated user and have had previous chats with them.
-     * It also loads the latest message for each user if available.
-     */
+
     public function loadUsers()
     {
         $authId = Auth::id();
@@ -60,11 +57,13 @@ class ChatList extends Component
                     $q->select('sender_id')->from('chats')->where('receiver_id', $authId);
                 });
             })
-            ->with(['latestMessage' => function ($q) use ($authId) {
-                $q->where(function ($q2) use ($authId) {
-                    $q2->where('sender_id', $authId)->orWhere('receiver_id', $authId);
-                })->latest('created_at');
-            }])
+            ->with([
+                'latestMessage' => function ($q) use ($authId) {
+                    $q->where(function ($q2) use ($authId) {
+                        $q2->where('sender_id', $authId)->orWhere('receiver_id', $authId);
+                    })->latest('created_at');
+                }
+            ])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%')
@@ -128,14 +127,14 @@ class ChatList extends Component
     public function saveMessage()
     {
         return Chat::create([
-            'sender_id'     => Auth::id(),
-            'receiver_id'   => $this->selectedUser->id,
-            'message'       => $this->message,
-            'message_type'  => 'text',
-            'reply_to_id'   => $this->replyToId,
-            'status'        => 'sent',
-            'sent_at'       => Carbon::now(),
-            'meta'          => null,
+            'sender_id' => Auth::id(),
+            'receiver_id' => $this->selectedUser->id,
+            'message' => $this->message,
+            'message_type' => 'text',
+            'reply_to_id' => $this->replyToId,
+            'status' => 'sent',
+            'sent_at' => Carbon::now(),
+            'meta' => null,
         ]);
     }
     public function selectUser($userId)
@@ -158,22 +157,15 @@ class ChatList extends Component
     {
         $authId = Auth::id();
 
-        $this->newUsers = User::where('id', '!=', $authId)
-            // ->where(function ($query) use ($authId) {
-            //     $query->whereIn('id', function ($q) use ($authId) {
-            //         $q->select('receiver_id')
-            //             ->from('chats')
-            //             ->where('sender_id', $authId);
-            //     })->orWhereIn('id', function ($q) use ($authId) {
-            //         $q->select('sender_id')
-            //             ->from('chats')
-            //             ->where('receiver_id', $authId);
-            //     });
-            // })
+        $this->newUsers = User::query()
+            ->where('id', '!=', $authId)
             ->when($this->search, function ($query) {
-                $query->where('name', 'like', '%' . $this->search . '%')
-                    ->orWhere('username', 'like', '%' . $this->search . '%');
+                $query->where(function ($q) {
+                    $q->where('name', 'like', "%{$this->search}%")
+                        ->orWhere('username', 'like', "%{$this->search}%");
+                });
             })
+            ->orderBy('name')
             ->get();
     }
 
@@ -182,8 +174,6 @@ class ChatList extends Component
         broadcast(new UserTyping($this->senderId, $this->receiverId))->toOthers();
     }
 
-    #[Layout('components.user.app')]
-    #[Title('Chat List')]
     public function render()
     {
         return view('livewire.chat.chat-list');
