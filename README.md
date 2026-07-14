@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="260" alt="Laravel Logo">
 </p>
 
-<h1 align="center">Automate Chat With Laravel</h1>
+<h1 align="center">Chat With Laravel</h1>
 
 <p align="center">
   A real-time one-to-one chat application built with <b>Laravel 12</b>, <b>Livewire 3</b>, and <b>Laravel Reverb</b> — featuring instant messaging, typing indicators, file/image/video attachments, reply threading, and a live chat sidebar, all without a page reload.
@@ -31,7 +31,7 @@
 
 ## About the Project
 
-**Automate Chat With Laravel** is a private messaging system where authenticated users can chat with each other in real time. It uses **Livewire** for reactive, server-driven UI components and **Laravel Reverb** (Laravel's first-party WebSocket server) for broadcasting events like new messages and typing status instantly to the receiver — no polling required.
+**Chat With Laravel** is a private messaging system where authenticated users can chat with each other in real time. It uses **Livewire** for reactive, server-driven UI components and **Laravel Reverb** (Laravel's first-party WebSocket server) for broadcasting events like new messages and typing status instantly to the receiver — no polling required.
 
 ## Features
 
@@ -110,8 +110,8 @@ Make sure you have the following installed before starting:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/AbulQasim123/Automate-Chat-With-Laravel.git
-cd Automate-Chat-With-Laravel
+git clone https://github.com/AbulQasim123/Chat-With-Laravel.git
+cd Chat-With-Laravel
 ```
 
 ### 2. Install PHP dependencies
